@@ -81,25 +81,29 @@ set "TMP=%TMP_DIR%"
 set "TEMP=%TMP_DIR%"
 
 pip install --prefer-binary -r requirements.txt
+if %errorlevel% neq 0 goto install_fallback
+goto start_app
+
+:install_fallback
+echo [ERROR] Failed to install full dependencies (likely due to missing Vulkan SDK).
+echo [INFO] Attempting to install without AI library (RIFE) to allow Mock Mode...
+
+:: Filter out rife-ncnn-vulkan-python and try again
+python -c "lines = open('requirements.txt').readlines(); open('requirements_safe.txt', 'w').writelines([l for l in lines if 'rife-ncnn-vulkan-python' not in l])"
+
+pip install --prefer-binary -r requirements_safe.txt
 if %errorlevel% neq 0 (
-    echo [ERROR] Failed to install full dependencies.
-    echo [INFO] Attempting to install without AI library (RIFE) to allow Mock Mode...
-    
-    :: Filter out rife-ncnn-vulkan-python and try again
-    python -c "lines = open('requirements.txt').readlines(); open('requirements_safe.txt', 'w').writelines([l for l in lines if 'rife-ncnn-vulkan-python' not in l])"
-    
-    pip install --prefer-binary -r requirements_safe.txt
-    if %errorlevel% neq 0 (
-        echo [FATAL] Failed to install basic dependencies.
-        pause
-        exit /b 1
-    )
-    
-    echo.
-    echo [WARNING] App installed without AI support (Missing Vulkan SDK or Build Tools).
-    echo [WARNING] Running in MOCK MODE. To fix, install Vulkan SDK: https://vulkan.lunarg.com/sdk/home
-    if exist requirements_safe.txt del requirements_safe.txt
+    echo [FATAL] Failed to install basic dependencies.
+    pause
+    exit /b 1
 )
+
+echo.
+echo [WARNING] App installed without AI support.
+echo [WARNING] Running in MOCK MODE. To fix, install Vulkan SDK: https://vulkan.lunarg.com/sdk/home
+if exist requirements_safe.txt del requirements_safe.txt
+
+:start_app
 
 :: Run the App
 echo [INFO] Starting ISEKAI...
