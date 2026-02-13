@@ -52,6 +52,25 @@ call venv\Scripts\activate
 echo [INFO] Upgrading pip and build tools...
 python -m pip install --upgrade pip setuptools wheel cmake ninja
 
+:: Check for C++ Compiler (cl.exe) and try to activate VS Build Tools if missing
+where cl.exe >nul 2>&1
+if %errorlevel% neq 0 (
+    echo [INFO] C++ compiler not found. Checking for VS Build Tools...
+    if exist "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat" (
+        echo [INFO] Activating VS 2022 Build Tools...
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat" >nul
+    ) else if exist "C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Auxiliary\Build\vcvars64.bat" (
+        echo [INFO] Activating VS 2026 Build Tools...
+        call "C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Auxiliary\Build\vcvars64.bat" >nul
+    ) else if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvars64.bat" (
+        echo [INFO] Activating VS 2019 Build Tools...
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvars64.bat" >nul
+    ) else if exist "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
+        echo [INFO] Activating VS 2022 Community...
+        call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" >nul
+    )
+)
+
 :: Install Dependencies
 echo [INFO] Checking dependencies...
 pip install --prefer-binary -r requirements.txt
