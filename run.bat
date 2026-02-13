@@ -74,23 +74,31 @@ if %errorlevel% neq 0 (
 :: Install Dependencies
 echo [INFO] Checking dependencies...
 
-:: Create a short temp directory to avoid path length issues during compilation
-if not exist "t" mkdir "t"
-set "TMP=%~dp0t"
-set "TEMP=%~dp0t"
+:: Create a short temp directory at the root of the drive to avoid path length issues
+set "TMP_DIR=%~d0\t"
+if not exist "%TMP_DIR%" mkdir "%TMP_DIR%"
+set "TMP=%TMP_DIR%"
+set "TEMP=%TMP_DIR%"
 
 pip install --prefer-binary -r requirements.txt
 if %errorlevel% neq 0 (
-    echo [ERROR] Failed to install dependencies.
+    echo [ERROR] Failed to install full dependencies.
+    echo [INFO] Attempting to install without AI library (RIFE) to allow Mock Mode...
+    
+    :: Filter out rife-ncnn-vulkan-python and try again
+    python -c "lines = open('requirements.txt').readlines(); open('requirements_safe.txt', 'w').writelines([l for l in lines if 'rife-ncnn-vulkan-python' not in l])"
+    
+    pip install --prefer-binary -r requirements_safe.txt
+    if %errorlevel% neq 0 (
+        echo [FATAL] Failed to install basic dependencies.
+        pause
+        exit /b 1
+    )
+    
     echo.
-    echo [POSSIBLE FIX]
-    echo It seems like your system cannot build the AI library from source.
-    echo Please download and install "Visual Studio Build Tools" from Microsoft.
-    echo Visit: https://visualstudio.microsoft.com/visual-cpp-build-tools/
-    echo Select "Desktop development with C++" during installation.
-    echo.
-    pause
-    exit /b 1
+    echo [WARNING] App installed without AI support (Missing Vulkan SDK or Build Tools).
+    echo [WARNING] Running in MOCK MODE. To fix, install Vulkan SDK: https://vulkan.lunarg.com/sdk/home
+    if exist requirements_safe.txt del requirements_safe.txt
 )
 
 :: Run the App
