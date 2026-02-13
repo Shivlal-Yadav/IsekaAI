@@ -48,6 +48,10 @@ if not exist "venv" (
 :: Activate Virtual Environment
 call venv\Scripts\activate
 
+:: Upgrade pip and install build tools to prevent wheel building errors
+echo [INFO] Upgrading pip and build tools...
+python -m pip install --upgrade pip setuptools wheel cmake ninja
+
 :: Install Dependencies
 echo [INFO] Checking dependencies...
 pip install -r requirements.txt
