@@ -61,6 +61,7 @@ if %errorlevel% neq 0 (
     echo [POSSIBLE FIX]
     echo It seems like your system cannot build the AI library from source.
     echo Please download and install "Visual Studio Build Tools" from Microsoft.
+    echo Visit: https://visualstudio.microsoft.com/visual-cpp-build-tools/
     echo Select "Desktop development with C++" during installation.
     echo.
     pause

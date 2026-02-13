@@ -1,4 +1,4 @@
 gradio
 opencv-python
 numpy<2
-rife-ncnn-vulkan-python==1.2.0
+rife-ncnn-vulkan-python==1.2.1
