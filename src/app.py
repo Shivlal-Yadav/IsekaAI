@@ -28,10 +28,20 @@ def animate_manga(files, multiplier, fps):
 
 css = """
 body { background-color: #1a1a1a; color: #ffffff; }
+.logo-container { display: flex; justify-content: center; margin-bottom: 20px; }
 """
 
 with gr.Blocks(title="ISEKAI: Manga to Motion AI", css=css, theme=gr.themes.Monochrome()) as demo:
-    gr.Markdown("# ISEKAI: Manga to Motion AI")
+    with gr.Row(elem_classes="logo-container"):
+        # Display logo.svg from the root directory
+        # If running from src, it's ../logo.svg. If running from root, it's ./logo.svg
+        logo_path = "logo.svg" if os.path.exists("logo.svg") else "../logo.svg"
+        if os.path.exists(logo_path):
+             gr.Image(logo_path, show_label=False, show_download_button=False, container=False, width=200)
+        else:
+             gr.Markdown("# ISEKAI")
+
+    gr.Markdown("# Manga to Motion AI")
     gr.Markdown("Upload your manga panels (numbered filenames) to generate a fluid animation using RIFE interpolation.")
 
     with gr.Row():
