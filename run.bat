@@ -14,13 +14,13 @@ if %errorlevel% equ 0 (
     set PYTHON_CMD=py -3.10
     echo [INFO] Found Python 3.10. Using it for best compatibility.
 ) else (
-python --version >nul 2>&1
-if %errorlevel% neq 0 (
-    echo [ERROR] Python is not installed or not in PATH.
+    python --version >nul 2>&1
+    if %errorlevel% neq 0 (
+        echo [ERROR] Python is not installed or not in PATH.
         echo Please install Python 3.10 from python.org and tick "Add Python to PATH".
-    pause
-    exit /b 1
-)
+        pause
+        exit /b 1
+    )
 )
 
 :: Check for FFmpeg
@@ -54,9 +54,15 @@ python -m pip install --upgrade pip setuptools wheel cmake ninja
 
 :: Install Dependencies
 echo [INFO] Checking dependencies...
-pip install -r requirements.txt
+pip install --prefer-binary -r requirements.txt
 if %errorlevel% neq 0 (
     echo [ERROR] Failed to install dependencies.
+    echo.
+    echo [POSSIBLE FIX]
+    echo It seems like your system cannot build the AI library from source.
+    echo Please download and install "Visual Studio Build Tools" from Microsoft.
+    echo Select "Desktop development with C++" during installation.
+    echo.
     pause
     exit /b 1
 )
