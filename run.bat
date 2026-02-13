@@ -6,12 +6,21 @@ echo      ISEKAI: Manga to Motion AI - Launcher
 echo ==================================================
 
 :: Check for Python
+set PYTHON_CMD=python
+
+:: Try to find Python 3.10 specifically via py launcher (Recommended for compatibility)
+py -3.10 --version >nul 2>&1
+if %errorlevel% equ 0 (
+    set PYTHON_CMD=py -3.10
+    echo [INFO] Found Python 3.10. Using it for best compatibility.
+) else (
 python --version >nul 2>&1
 if %errorlevel% neq 0 (
     echo [ERROR] Python is not installed or not in PATH.
-    echo Please install Python 3.10+ from python.org and tick "Add Python to PATH".
+        echo Please install Python 3.10 from python.org and tick "Add Python to PATH".
     pause
     exit /b 1
+)
 )
 
 :: Check for FFmpeg
@@ -28,7 +37,7 @@ if %errorlevel% neq 0 (
 :: Create Virtual Environment if it doesn't exist
 if not exist "venv" (
     echo [INFO] Creating virtual environment...
-    python -m venv venv
+    %PYTHON_CMD% -m venv venv
     if %errorlevel% neq 0 (
         echo [ERROR] Failed to create virtual environment.
         pause
