@@ -73,6 +73,12 @@ if %errorlevel% neq 0 (
 
 :: Install Dependencies
 echo [INFO] Checking dependencies...
+
+:: Create a short temp directory to avoid path length issues during compilation
+if not exist "t" mkdir "t"
+set "TMP=%~dp0t"
+set "TEMP=%~dp0t"
+
 pip install --prefer-binary -r requirements.txt
 if %errorlevel% neq 0 (
     echo [ERROR] Failed to install dependencies.
