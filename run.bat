@@ -18,7 +18,7 @@ if %errorlevel% neq 0 (
 ffmpeg -version >nul 2>&1
 if %errorlevel% neq 0 (
     echo [WARNING] FFmpeg is not installed or not in PATH.
-    echo The app will run in MOCK mode (no video generation) unless FFmpeg is installed.
+    echo The app will run in MOCK mode ^(no video generation^) unless FFmpeg is installed.
     echo Please download FFmpeg and add it to your PATH variable.
     echo Visit: https://ffmpeg.org/download.html
     echo.
