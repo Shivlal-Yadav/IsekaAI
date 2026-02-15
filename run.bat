@@ -92,6 +92,7 @@ echo [INFO] Attempting to install without AI library (RIFE) to allow Mock Mode..
 python -c "lines = open('requirements.txt').readlines(); open('requirements_safe.txt', 'w').writelines([l for l in lines if 'rife-ncnn-vulkan-python' not in l])"
 
 pip install --prefer-binary -r requirements_safe.txt
+pip install "gradio>=4.0,<5.0"
 if %errorlevel% neq 0 (
     echo [FATAL] Failed to install basic dependencies.
     pause
