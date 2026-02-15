@@ -50,7 +50,7 @@ call venv\Scripts\activate
 
 :: Upgrade pip and install build tools to prevent wheel building errors
 echo [INFO] Upgrading pip and build tools...
-python -m pip install --upgrade pip setuptools wheel cmake ninja
+python -m pip install --upgrade pip setuptools wheel "cmake<3.27" ninja
 
 :: Check for C++ Compiler (cl.exe) and try to activate VS Build Tools if missing
 where cl.exe >nul 2>&1
@@ -80,6 +80,10 @@ if not exist "%TMP_DIR%" mkdir "%TMP_DIR%"
 set "TMP=%TMP_DIR%"
 set "TEMP=%TMP_DIR%"
 
+:: Install RIFE with no build isolation to use the compatible CMake version
+pip install "rife-ncnn-vulkan-python==1.2.1" --no-build-isolation
+if %errorlevel% neq 0 goto install_fallback
+
 pip install --prefer-binary -r requirements.txt
 if %errorlevel% neq 0 goto install_fallback
 goto start_app
@@ -92,7 +96,7 @@ echo [INFO] Attempting to install without AI library (RIFE) to allow Mock Mode..
 python -c "lines = open('requirements.txt').readlines(); open('requirements_safe.txt', 'w').writelines([l for l in lines if 'rife-ncnn-vulkan-python' not in l])"
 
 pip install --prefer-binary -r requirements_safe.txt
-pip install "gradio>=4.0,<5.0"
+pip install "gradio>=4.0,<5.0" "huggingface-hub<0.25.0"
 if %errorlevel% neq 0 (
     echo [FATAL] Failed to install basic dependencies.
     pause
