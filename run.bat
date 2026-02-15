@@ -50,7 +50,7 @@ call venv\Scripts\activate
 
 :: Upgrade pip and install build tools to prevent wheel building errors
 echo [INFO] Upgrading pip and build tools...
-python -m pip install --upgrade pip setuptools wheel "cmake<3.27" ninja
+python -m pip install --upgrade pip setuptools wheel "cmake<3.27" ninja cmake-build-extension
 
 :: Check for C++ Compiler (cl.exe) and try to activate VS Build Tools if missing
 where cl.exe >nul 2>&1
@@ -73,6 +73,9 @@ if %errorlevel% neq 0 (
 
 :: Install Dependencies
 echo [INFO] Checking dependencies...
+
+:: Ensure compatible FastAPI version for Gradio 4 to prevent schema errors
+pip install "fastapi<0.120"
 
 :: Create a short temp directory at the root of the drive to avoid path length issues
 set "TMP_DIR=%~d0\t"
